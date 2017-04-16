@@ -1,0 +1,21 @@
+<Database>
+    <Name>hl7receiver</Name>
+    <Type>postgresql</Type>
+    <JdbcUrl>jdbc:postgresql://localhost:5432/hl7receiver</JdbcUrl>
+    <Username>postgres</Username>
+    <Password></Password>
+    <DBPatcherActions>
+        <CreateDatabaseIfNotExists/>
+        <ApplySchema>
+            <Path>schema</Path>
+        </ApplySchema>
+        <DropFunctions/>
+        <ApplyFunctions>
+            <Path>functions</Path>
+        </ApplyFunctions>
+        <DropTriggers/>
+        <ApplyTriggers>
+            <Path>triggers</Path>
+        </ApplyTriggers>
+    </DBPatcherActions>
+</Database>

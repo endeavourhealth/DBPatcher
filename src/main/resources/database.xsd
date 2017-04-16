@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:element name="Database">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Name" type="xs:string"/>
+				<xs:element name="Type" type="xs:string"/>
+				<xs:element name="JdbcUrl" type="xs:string"/>
+				<xs:element name="Username" type="xs:string"/>
+				<xs:element name="Password" type="xs:string"/>
+				<xs:element ref="DBPatcherActions"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ApplySchema">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Path" type="xs:string"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="DropTriggers">
+		<xs:complexType>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ApplyTriggers">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Path" type="xs:string"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="DropFunctions">
+		<xs:complexType>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ApplyFunctions">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Path" type="xs:string"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="DBPatcherActions">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="CreateDatabaseIfNotExists"/>
+				<xs:element ref="ApplySchema"/>
+				<xs:element ref="DropFunctions"/>
+				<xs:element ref="ApplyFunctions"/>
+				<xs:element ref="DropTriggers"/>
+				<xs:element ref="ApplyTriggers"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="CreateDatabaseIfNotExists">
+		<xs:complexType>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

@@ -3,16 +3,24 @@
 	<xs:element name="Database">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element name="Name" type="xs:string"/>
-				<xs:element name="Type" type="xs:string"/>
-				<xs:element name="JdbcUrl" type="xs:string"/>
-				<xs:element name="Username" type="xs:string"/>
-				<xs:element name="Password" type="xs:string"/>
-				<xs:element ref="DBPatcherActions"/>
+				<xs:element name="Name" minOccurs="1" maxOccurs="1" type="xs:string"/>
+				<xs:element ref="Type" minOccurs="1" maxOccurs="1"/>
+				<xs:element name="JdbcUrl" minOccurs="0" maxOccurs="1" type="xs:string"/>
+				<xs:element name="Username" minOccurs="0"  maxOccurs="1" type="xs:string"/>
+				<xs:element name="Password" minOccurs="0" maxOccurs="1" type="xs:string"/>
+				<xs:element ref="DBPatcherActions" minOccurs="1" maxOccurs="1"/>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name="ApplySchema">
+    <xs:element name="Type">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:enumeration value="postgresql"/>
+                <xs:enumeration value="mysql"/>
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:element>
+    <xs:element name="ApplySchema">
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element name="Path" type="xs:string"/>

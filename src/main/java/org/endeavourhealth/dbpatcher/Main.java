@@ -1,18 +1,13 @@
 package org.endeavourhealth.dbpatcher;
 
-import org.apache.commons.io.Charsets;
+import org.apache.commons.io.FileUtils;
+import org.flywaydb.core.Flyway;
 
-import javax.annotation.Resources;
 import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 public class Main {
 
-    public static void main(String[] args) throws URISyntaxException, IOException {
+    public static void main(String[] args) throws Exception {
 
         final String urlArg = "--url";
         final String usernameArg = "--username";
@@ -35,7 +30,7 @@ public class Main {
         String url = null;
         String username = null;
         String password = null;
-        String xml = null;
+        String xmlPath = null;
 
         for (String arg : args) {
             if (arg.startsWith("-")) {
@@ -50,21 +45,31 @@ public class Main {
                 return;
             }
 
-            if (xml != null) {
+            if (xmlPath != null) {
                 System.out.println("Unrecognised argument '" + arg + "'");
                 return;
             }
 
-            xml = arg;
+            xmlPath = arg;
         }
 
-        File xmlFile = new File(xml);
+        File xmlFile = new File(xmlPath);
 
         if (!xmlFile.isFile() || (!xmlFile.exists())) {
-            System.out.println("Could not find database configuration file '" + xml + "'");
+            System.out.println("Could not find database configuration file '" + xmlPath + "'");
             return;
         }
 
+        String xsd = ResourceHelper.getResourceAsString("database.xsd");
+        String xml = FileUtils.readFileToString(xmlFile, "UTF-8");
+
+        try {
+            XmlHelper.validate(xml, xsd);
+        } catch (Exception e) {
+            System.out.println("Error reading '" + xmlPath + "' - " + e.getMessage());
+        }
+
+        Flyway flyway = new Flyway();
 
     }
 }

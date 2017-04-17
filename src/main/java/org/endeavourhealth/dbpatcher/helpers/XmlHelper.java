@@ -1,4 +1,4 @@
-package org.endeavourhealth.dbpatcher;
+package org.endeavourhealth.dbpatcher.helpers;
 
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;

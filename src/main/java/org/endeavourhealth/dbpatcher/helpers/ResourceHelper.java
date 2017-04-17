@@ -1,18 +1,15 @@
-package org.endeavourhealth.dbpatcher;
-
-import org.apache.commons.io.Charsets;
+package org.endeavourhealth.dbpatcher.helpers;
 
 import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 
 public class ResourceHelper {
     public static URL getResourceAsURLObject(String url) throws IOException {
-        URL urlItem = com.google.common.io.Resources.getResource(url);
-        return urlItem;
+        return com.google.common.io.Resources.getResource(url);
     }
     public static String getResourceAsString(String url) throws IOException {
         URL urlItem = getResourceAsURLObject(url);
-        String text = com.google.common.io.Resources.toString(urlItem, Charsets.UTF_8);
-        return text;
+        return com.google.common.io.Resources.toString(urlItem, StandardCharsets.UTF_8);
     }
 }

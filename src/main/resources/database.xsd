@@ -4,7 +4,6 @@
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element name="Name" minOccurs="1" maxOccurs="1" type="xs:string"/>
-				<xs:element ref="Type" minOccurs="1" maxOccurs="1"/>
 				<xs:element name="JdbcUrl" minOccurs="0" maxOccurs="1" type="xs:string"/>
 				<xs:element name="Username" minOccurs="0"  maxOccurs="1" type="xs:string"/>
 				<xs:element name="Password" minOccurs="0" maxOccurs="1" type="xs:string"/>
@@ -26,6 +25,7 @@
 				<xs:element name="Schema" minOccurs="1" maxOccurs="1" type="xs:string"/>
 				<xs:element name="Functions" minOccurs="0" maxOccurs="1" type="xs:string"/>
 				<xs:element name="Triggers" minOccurs="0" maxOccurs="1" type="xs:string"/>
+                <xs:element name="Scripts" minOccurs="0" maxOccurs="1" type="xs:string"/>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>

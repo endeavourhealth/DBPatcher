@@ -19,7 +19,6 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="Name" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element ref="{}Type"/>
  *         &lt;element name="JdbcUrl" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="Username" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="Password" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
@@ -35,7 +34,6 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
     "name",
-    "type",
     "jdbcUrl",
     "username",
     "password",
@@ -46,8 +44,6 @@ public class Database {
 
     @XmlElement(name = "Name", required = true)
     protected String name;
-    @XmlElement(name = "Type", required = true)
-    protected String type;
     @XmlElement(name = "JdbcUrl")
     protected String jdbcUrl;
     @XmlElement(name = "Username")
@@ -79,30 +75,6 @@ public class Database {
      */
     public void setName(String value) {
         this.name = value;
-    }
-
-    /**
-     * Gets the value of the type property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getType() {
-        return type;
-    }
-
-    /**
-     * Sets the value of the type property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setType(String value) {
-        this.type = value;
     }
 
     /**

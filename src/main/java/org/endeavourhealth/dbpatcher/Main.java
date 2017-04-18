@@ -1,8 +1,13 @@
 package org.endeavourhealth.dbpatcher;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.ConsoleAppender;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
+import org.endeavourhealth.dbpatcher.helpers.LogHelper;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
@@ -12,19 +17,18 @@ import java.util.stream.Collectors;
 
 public class Main {
 
-    private static final Logger LOG = LoggerFactory.getLogger(Main.class);
+    private static final LogHelper LOG = LogHelper.getLogger(Main.class);
 
     private final static String ARG_HELP = "--help";
     private final static String ARG_URL = "--url";
     private final static String ARG_USERNAME = "--username";
     private final static String ARG_PASSWORD = "--password";
-    final static String DIVIDER = "------------------------------------------------------------";
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         try {
-            System.out.println(DIVIDER);
-            System.out.println("DBPatcher v1.0");
-            System.out.println(DIVIDER);
+            configureLogback();
+
+            LOG.infoWithDivider("DBPatcher v1.0");
 
             if (ArrayUtils.isEmpty(args) || (hasHelpArg(args))) {
                 printHelp();
@@ -53,19 +57,22 @@ public class Main {
             DBPatcher dbPatcher = new DBPatcher(databaseXmlPath, urlOverride, usernameOverride, passwordOverride);
             dbPatcher.patch();
 
-        } catch (DBPatcherException e) {
-            System.out.println("[ERROR] " + e.getMessage());
+            LOG.infoWithDivider("PATCH SUCCESS");
+
+        } catch (Exception e) {
+            LOG.error("", e);
+            LOG.errorWithDivider("PATCH FAILURE");
         }
     }
 
     private static void printHelp() {
-        System.out.println("");
-        System.out.println(" usage:  java -jar DBPatcher.jar database.xml [options]");
-        System.out.println("");
-        System.out.println(" options:  " + ARG_URL + "=jdbc-url    Overrides jdbc url in database.xml");
-        System.out.println("           " + ARG_USERNAME + "=user   Overrides username in database.xml");
-        System.out.println("           " + ARG_PASSWORD + "=pass   Overrides password in database.xml");
-        System.out.println("");
+        LOG.info("");
+        LOG.info(" usage:  java -jar DBPatcher.jar database.xml [options]");
+        LOG.info("");
+        LOG.info(" options:  " + ARG_URL + "=jdbc-url    Overrides jdbc url in database.xml");
+        LOG.info("           " + ARG_USERNAME + "=user   Overrides username in database.xml");
+        LOG.info("           " + ARG_PASSWORD + "=pass   Overrides password in database.xml");
+        LOG.info("");
     }
 
     private static String getFirstArg(String args[]) {
@@ -109,5 +116,19 @@ public class Main {
         return Arrays
                 .stream(args)
                 .anyMatch(t -> t.equals(ARG_HELP));
+    }
+
+    private static void configureLogback() {
+        LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
+        ch.qos.logback.classic.Logger logger = context.getLogger(ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);
+        logger.setLevel(Level.INFO);
+
+        ConsoleAppender<ILoggingEvent> appender = (ConsoleAppender<ILoggingEvent>) logger.getAppender("console");
+
+        PatternLayoutEncoder encoder = new PatternLayoutEncoder();
+        encoder.setContext(context);
+        encoder.setPattern("[%-4level] %message%n");
+        encoder.start();
+        appender.setEncoder(encoder);
     }
 }

@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="Schema" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="Functions" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="Triggers" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="Scripts" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -33,7 +34,8 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "", propOrder = {
     "schema",
     "functions",
-    "triggers"
+    "triggers",
+    "scripts"
 })
 @XmlRootElement(name = "Paths")
 public class Paths {
@@ -44,6 +46,8 @@ public class Paths {
     protected String functions;
     @XmlElement(name = "Triggers")
     protected String triggers;
+    @XmlElement(name = "Scripts")
+    protected String scripts;
 
     /**
      * Gets the value of the schema property.
@@ -115,6 +119,30 @@ public class Paths {
      */
     public void setTriggers(String value) {
         this.triggers = value;
+    }
+
+    /**
+     * Gets the value of the scripts property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getScripts() {
+        return scripts;
+    }
+
+    /**
+     * Sets the value of the scripts property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setScripts(String value) {
+        this.scripts = value;
     }
 
 }

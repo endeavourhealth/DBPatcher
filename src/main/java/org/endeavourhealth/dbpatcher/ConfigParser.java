@@ -4,6 +4,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
 import org.endeavourhealth.dbpatcher.configuration.Database;
+import org.endeavourhealth.dbpatcher.helpers.LogHelper;
 import org.endeavourhealth.dbpatcher.helpers.ResourceHelper;
 import org.endeavourhealth.dbpatcher.helpers.XmlHelper;
 
@@ -15,6 +16,8 @@ import java.nio.file.Paths;
 public class ConfigParser {
     private final static String DATABASE_SCHEMA_FILENAME = "database.xsd";
 
+    private final static LogHelper LOG = LogHelper.getLogger(ConfigParser.class);
+
     private String jdbcUrl;
     private String username;
     private String password;
@@ -22,6 +25,7 @@ public class ConfigParser {
     private String schemaPath;
     private String functionsPath;
     private String triggersPath;
+    private String scriptsPath;
 
     public ConfigParser(String databaseXmlPath, String jdbcUrlOverride, String usernameOverride, String passwordOverride) throws DBPatcherException {
         determineConfiguration(databaseXmlPath, jdbcUrlOverride, usernameOverride, passwordOverride);
@@ -55,12 +59,14 @@ public class ConfigParser {
         return triggersPath;
     }
 
+    public String getScriptsPath() { return scriptsPath; }
+
     private void determineConfiguration(String databaseXmlPath, String jdbcUrlOverride, String usernameOverride, String passwordOverride) throws DBPatcherException {
 
         File xmlFile = getDatabaseXmlFile(databaseXmlPath);
         Database database = getDatabaseXml(xmlFile);
 
-        System.out.println(" Using configuration:");
+        LOG.info(" Using configuration:");
 
         printConfiguration("Database xml file", getCanonicalPath(xmlFile));
 
@@ -80,6 +86,7 @@ public class ConfigParser {
         this.schemaPath = getAndPrintCanonicalPath("schema", database.getPaths().getSchema());
         this.functionsPath = getAndPrintCanonicalPath("functions", database.getPaths().getFunctions());
         this.triggersPath = getAndPrintCanonicalPath("triggers", database.getPaths().getTriggers());
+        this.scriptsPath = getAndPrintCanonicalPath("scripts", database.getPaths().getScripts());
     }
 
     public void patch() {
@@ -109,10 +116,13 @@ public class ConfigParser {
         if (hideValue)
             printedValue = "(value hidden)";
 
-        System.out.println("  " + StringUtils.rightPad(name + ":  ", 27) + printedValue);
+        LOG.info("  " + StringUtils.rightPad(name + ":  ", 27) + printedValue);
     }
 
     private String getAndPrintCanonicalPath(String pathName, String relativePathValue) throws DBPatcherException {
+        if (relativePathValue == null)
+            return null;
+
         File path = new File(Paths.get(this.basePath, relativePathValue).toString());
 
         if (!path.isDirectory() || (!path.exists()))

@@ -19,8 +19,14 @@ public class DataLayer {
         this.connection = connection;
     }
 
+    private Statement createStatement() throws SQLException {
+        Statement statement = connection.createStatement();
+        statement.setQueryTimeout(10);
+        return statement;
+    }
+
     public List<String> getUserFunctionSignatures() throws IOException, SQLException {
-        try (Statement statement = connection.createStatement()) {
+        try (Statement statement = createStatement()) {
 
             String sql = ResourceHelper.getResourceAsString("postgresql/get-user-functions.sql");
 
@@ -48,6 +54,12 @@ public class DataLayer {
                         .collect(Collectors.toList())
                , "\n");
 
+        try (Statement statement = connection.createStatement()) {
+            statement.execute(sql);
+        }
+    }
+
+    public void executeSql(String sql) throws SQLException {
         try (Statement statement = connection.createStatement()) {
             statement.execute(sql);
         }

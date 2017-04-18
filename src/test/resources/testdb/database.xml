@@ -1,12 +1,12 @@
 <Database>
     <Name>testdb</Name>
-    <Type>postgresql</Type>
     <JdbcUrl>jdbc:postgresql://localhost:5432/testdb</JdbcUrl>
     <Username>postgres</Username>
     <Password></Password>
     <Paths>
         <Schema>schema</Schema>
-        <Functions>functions</Functions>
-        <Triggers>triggers</Triggers>
+        <!--<Functions>functions</Functions>-->
+        <!--<Triggers>triggers</Triggers>-->
+        <!--<Scripts>scripts</Scripts>-->
     </Paths>
 </Database>

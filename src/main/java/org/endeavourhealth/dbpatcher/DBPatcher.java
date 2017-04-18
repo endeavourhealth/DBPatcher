@@ -1,22 +1,22 @@
 package org.endeavourhealth.dbpatcher;
 
-import org.endeavourhealth.dbpatcher.configuration.Database;
+import org.flywaydb.core.Flyway;
 
 public class DBPatcher {
 
-    private Database database;
-    private String url;
-    private String username;
-    private String password;
+    private ConfigParser configParser;
 
-    public DBPatcher(Database database, String url, String username, String password) {
-        this.database = database;
-        this.url = url;
-        this.username = username;
-        this.password = password;
+    public DBPatcher(String databaseXmlPath, String jdbcUrlOverride, String usernameOverride, String passwordOverride) throws DBPatcherException {
+        this.configParser = new ConfigParser(databaseXmlPath, jdbcUrlOverride, usernameOverride, passwordOverride);
     }
 
     public void patch() {
+        System.out.println(Main.DIVIDER);
+        System.out.println("Commence patching...");
 
+        Flyway flyway = new Flyway();
+        flyway.setLocations(configParser.getSchemaPath());
+        flyway.migrate();
     }
+
 }

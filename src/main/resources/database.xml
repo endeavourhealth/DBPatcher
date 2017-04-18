@@ -4,18 +4,9 @@
     <JdbcUrl>jdbc:postgresql://localhost:5432/hl7receiver</JdbcUrl>
     <Username>postgres</Username>
     <Password></Password>
-    <DBPatcherActions>
-        <CreateDatabaseIfNotExists/>
-        <ApplySchema>
-            <Path>schema</Path>
-        </ApplySchema>
-        <DropFunctions/>
-        <ApplyFunctions>
-            <Path>functions</Path>
-        </ApplyFunctions>
-        <DropTriggers/>
-        <ApplyTriggers>
-            <Path>triggers</Path>
-        </ApplyTriggers>
-    </DBPatcherActions>
+    <Paths>
+        <Schema>schema</Schema>
+        <Functions>functions</Functions>
+        <Triggers>triggers</Triggers>
+    </Paths>
 </Database>

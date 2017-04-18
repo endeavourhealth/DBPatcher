@@ -8,7 +8,7 @@
 				<xs:element name="JdbcUrl" minOccurs="0" maxOccurs="1" type="xs:string"/>
 				<xs:element name="Username" minOccurs="0"  maxOccurs="1" type="xs:string"/>
 				<xs:element name="Password" minOccurs="0" maxOccurs="1" type="xs:string"/>
-				<xs:element ref="DBPatcherActions" minOccurs="1" maxOccurs="1"/>
+				<xs:element ref="Paths" minOccurs="1" maxOccurs="1"/>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
@@ -20,49 +20,13 @@
             </xs:restriction>
         </xs:simpleType>
     </xs:element>
-    <xs:element name="ApplySchema">
+	<xs:element name="Paths">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element name="Path" type="xs:string"/>
+				<xs:element name="Schema" minOccurs="1" maxOccurs="1" type="xs:string"/>
+				<xs:element name="Functions" minOccurs="0" maxOccurs="1" type="xs:string"/>
+				<xs:element name="Triggers" minOccurs="0" maxOccurs="1" type="xs:string"/>
 			</xs:sequence>
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="DropTriggers">
-		<xs:complexType>
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="ApplyTriggers">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element name="Path" type="xs:string"/>
-			</xs:sequence>
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="DropFunctions">
-		<xs:complexType>
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="ApplyFunctions">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element name="Path" type="xs:string"/>
-			</xs:sequence>
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="DBPatcherActions">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element ref="CreateDatabaseIfNotExists"/>
-				<xs:element ref="ApplySchema"/>
-				<xs:element ref="DropFunctions"/>
-				<xs:element ref="ApplyFunctions"/>
-				<xs:element ref="DropTriggers"/>
-				<xs:element ref="ApplyTriggers"/>
-			</xs:sequence>
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="CreateDatabaseIfNotExists">
-		<xs:complexType>
 		</xs:complexType>
 	</xs:element>
 </xs:schema>

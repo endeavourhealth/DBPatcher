@@ -19,11 +19,11 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="Name" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="Type" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="JdbcUrl" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="Username" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="Password" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element ref="{}DBPatcherActions"/>
+ *         &lt;element ref="{}Type"/>
+ *         &lt;element name="JdbcUrl" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="Username" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="Password" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element ref="{}Paths"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -39,7 +39,7 @@ import javax.xml.bind.annotation.XmlType;
     "jdbcUrl",
     "username",
     "password",
-    "dbPatcherActions"
+    "paths"
 })
 @XmlRootElement(name = "Database")
 public class Database {
@@ -48,14 +48,14 @@ public class Database {
     protected String name;
     @XmlElement(name = "Type", required = true)
     protected String type;
-    @XmlElement(name = "JdbcUrl", required = true)
+    @XmlElement(name = "JdbcUrl")
     protected String jdbcUrl;
-    @XmlElement(name = "Username", required = true)
+    @XmlElement(name = "Username")
     protected String username;
-    @XmlElement(name = "Password", required = true)
+    @XmlElement(name = "Password")
     protected String password;
-    @XmlElement(name = "DBPatcherActions", required = true)
-    protected DBPatcherActions dbPatcherActions;
+    @XmlElement(name = "Paths", required = true)
+    protected Paths paths;
 
     /**
      * Gets the value of the name property.
@@ -178,27 +178,27 @@ public class Database {
     }
 
     /**
-     * Gets the value of the dbPatcherActions property.
+     * Gets the value of the paths property.
      * 
      * @return
      *     possible object is
-     *     {@link DBPatcherActions }
+     *     {@link Paths }
      *     
      */
-    public DBPatcherActions getDBPatcherActions() {
-        return dbPatcherActions;
+    public Paths getPaths() {
+        return paths;
     }
 
     /**
-     * Sets the value of the dbPatcherActions property.
+     * Sets the value of the paths property.
      * 
      * @param value
      *     allowed object is
-     *     {@link DBPatcherActions }
+     *     {@link Paths }
      *     
      */
-    public void setDBPatcherActions(DBPatcherActions value) {
-        this.dbPatcherActions = value;
+    public void setPaths(Paths value) {
+        this.paths = value;
     }
 
 }

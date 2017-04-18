@@ -67,6 +67,7 @@
                     <descriptorRefs><descriptorRef>jar-with-dependencies</descriptorRef></descriptorRefs>
                     <finalName>DBPatcher</finalName>
                     <appendAssemblyId>false</appendAssemblyId>
+                    <attach>false</attach>
                     <archive>
                         <manifest>
                             <mainClass>org.endeavourhealth.dbpatcher.Main</mainClass>

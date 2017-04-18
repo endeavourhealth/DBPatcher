@@ -1,7 +1,7 @@
 <Database>
-    <Name>hl7receiver</Name>
+    <Name>testdb</Name>
     <Type>postgresql</Type>
-    <JdbcUrl>jdbc:postgresql://localhost:5432/hl7receiver</JdbcUrl>
+    <JdbcUrl>jdbc:postgresql://localhost:5432/testdb</JdbcUrl>
     <Username>postgres</Username>
     <Password></Password>
     <Paths>

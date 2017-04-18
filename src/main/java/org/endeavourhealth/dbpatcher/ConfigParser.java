@@ -58,7 +58,6 @@ public class ConfigParser {
     private void determineConfiguration(String databaseXmlPath, String jdbcUrlOverride, String usernameOverride, String passwordOverride) throws DBPatcherException {
 
         File xmlFile = getDatabaseXmlFile(databaseXmlPath);
-        this.basePath = xmlFile.getParentFile().getPath();
         Database database = getDatabaseXml(xmlFile);
 
         System.out.println(" Using configuration:");
@@ -75,10 +74,12 @@ public class ConfigParser {
         if (StringUtils.isEmpty(this.username))
             throw new DBPatcherException("Empty username");
 
-        checkAndPrintPath("base", "");
-        checkAndPrintPath("schema", database.getPaths().getSchema());
-        checkAndPrintPath("functions", database.getPaths().getFunctions());
-        checkAndPrintPath("triggers", database.getPaths().getTriggers());
+        this.basePath = xmlFile.getParentFile().getPath();
+        printPath("base", this.basePath);
+
+        this.schemaPath = getAndPrintCanonicalPath("testdb/schema", database.getPaths().getSchema());
+        this.functionsPath = getAndPrintCanonicalPath("testdb/functions", database.getPaths().getFunctions());
+        this.triggersPath = getAndPrintCanonicalPath("testdb/triggers", database.getPaths().getTriggers());
     }
 
     public void patch() {
@@ -111,13 +112,19 @@ public class ConfigParser {
         System.out.println("  " + StringUtils.rightPad(name + ":  ", 27) + printedValue);
     }
 
-    private void checkAndPrintPath(String pathName, String pathValue) throws DBPatcherException {
-        File schemaPath = new File(Paths.get(this.basePath, pathValue).toString());
+    private String getAndPrintCanonicalPath(String pathName, String relativePathValue) throws DBPatcherException {
+        File path = new File(Paths.get(this.basePath, relativePathValue).toString());
 
-        if (!schemaPath.isDirectory() || (!schemaPath.exists()))
-            throw new DBPatcherException("Could not find " + pathName + " path '" + getCanonicalPath(schemaPath) + "'");
+        if (!path.isDirectory() || (!path.exists()))
+            throw new DBPatcherException("Could not find " + pathName + " path '" + getCanonicalPath(path) + "'");
 
-        printConfiguration(WordUtils.capitalize(pathName) + " path", getCanonicalPath(schemaPath));
+        printPath(pathName, getCanonicalPath(path));
+
+        return getCanonicalPath(path);
+    }
+
+    private void printPath(String pathName, String pathValue) throws DBPatcherException {
+        printConfiguration(WordUtils.capitalize(pathName) + " path", getCanonicalPath(new File(pathValue)));
     }
 
     private static String getCanonicalPath(File file) throws DBPatcherException {
@@ -136,7 +143,6 @@ public class ConfigParser {
             XmlHelper.validate(xml, xsd);
 
             return XmlHelper.deserialize(xml, Database.class);
-
         } catch (Exception e) {
             throw new DBPatcherException("Error reading '" + xmlFile.getPath() + "' - " + e.getMessage(), e);
         }

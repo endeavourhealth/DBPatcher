@@ -22,31 +22,23 @@ import java.io.StringReader;
 import java.io.StringWriter;
 
 public class XmlHelper {
-    public static <T> T deserialize(String xml, Class<T> objectClass) throws XMLStreamException {
-        try {
-            StringReader reader = new StringReader(xml);
-            XMLInputFactory factory = XMLInputFactory.newInstance();
-            XMLStreamReader xmlReader = factory.createXMLStreamReader(reader);
+    public static <T> T deserialize(String xml, Class<T> objectClass) throws JAXBException, XMLStreamException {
+        StringReader reader = new StringReader(xml);
+        XMLInputFactory factory = XMLInputFactory.newInstance();
+        XMLStreamReader xmlReader = factory.createXMLStreamReader(reader);
 
-            JAXBContext jaxbContent = JAXBContext.newInstance(objectClass);
-            Unmarshaller unmarshaller = jaxbContent.createUnmarshaller();
+        JAXBContext jaxbContent = JAXBContext.newInstance(objectClass);
+        Unmarshaller unmarshaller = jaxbContent.createUnmarshaller();
 
-            return unmarshaller.unmarshal(xmlReader, objectClass).getValue();
-        } catch (Exception e) {
-            throw new XMLStreamException(String.format("Error deserialising %s", objectClass.getTypeName()), e);
-        }
+        return unmarshaller.unmarshal(xmlReader, objectClass).getValue();
     }
 
-    public static <T> String serialize(JAXBElement<T> object) throws XMLStreamException {
-        try {
-            JAXBContext jaxbContext = JAXBContext.newInstance(object.getClass());
-            Marshaller m = jaxbContext.createMarshaller();
-            StringWriter stringWriter = new StringWriter();
-            m.marshal(object, stringWriter);
-            return stringWriter.toString();
-        } catch (JAXBException e) {
-            throw new XMLStreamException(String.format("Error serialising %s", object.getClass().getTypeName()), e);
-        }
+    public static <T> String serialize(JAXBElement<T> object) throws JAXBException {
+        JAXBContext jaxbContext = JAXBContext.newInstance(object.getClass());
+        Marshaller m = jaxbContext.createMarshaller();
+        StringWriter stringWriter = new StringWriter();
+        m.marshal(object, stringWriter);
+        return stringWriter.toString();
     }
 
     public static Document documentFromString(String xml) throws Exception {

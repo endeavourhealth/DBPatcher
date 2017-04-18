@@ -15,7 +15,9 @@ public class DBPatcher {
         System.out.println("Commence patching...");
 
         Flyway flyway = new Flyway();
-        flyway.setLocations(configParser.getSchemaPath());
+        flyway.setDataSource(configParser.getJdbcUrl(), configParser.getUsername(), configParser.getPassword());
+        flyway.setLocations("filesystem:" + configParser.getSchemaPath());
+        flyway.setSqlMigrationSeparator("-");
         flyway.migrate();
     }
 

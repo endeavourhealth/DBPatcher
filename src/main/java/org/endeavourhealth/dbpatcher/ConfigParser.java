@@ -3,7 +3,9 @@ package org.endeavourhealth.dbpatcher;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
+import org.endeavourhealth.dbpatcher.configuration.Connection;
 import org.endeavourhealth.dbpatcher.configuration.Database;
+import org.endeavourhealth.dbpatcher.exceptions.DBPatcherException;
 import org.endeavourhealth.dbpatcher.helpers.LogHelper;
 import org.endeavourhealth.dbpatcher.helpers.ResourceHelper;
 import org.endeavourhealth.dbpatcher.helpers.XmlHelper;
@@ -12,13 +14,16 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
+import java.util.function.Function;
 
 public class ConfigParser {
     private final static String DATABASE_SCHEMA_FILENAME = "database.xsd";
 
     private final static LogHelper LOG = LogHelper.getLogger(ConfigParser.class);
 
-    private String jdbcUrl;
+    private String hostname;
+    private int port;
+    private String databaseName;
     private String username;
     private String password;
     private String basePath;
@@ -27,12 +32,20 @@ public class ConfigParser {
     private String triggersPath;
     private String scriptsPath;
 
-    public ConfigParser(String databaseXmlPath, String jdbcUrlOverride, String usernameOverride, String passwordOverride) throws DBPatcherException {
-        determineConfiguration(databaseXmlPath, jdbcUrlOverride, usernameOverride, passwordOverride);
+    public ConfigParser(Arguments arguments) throws DBPatcherException {
+        determineConfiguration(arguments);
     }
 
-    public String getJdbcUrl() {
-        return jdbcUrl;
+    public String getHostname() {
+        return hostname;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public String getDatabaseName() {
+        return databaseName;
     }
 
     public String getUsername() {
@@ -61,21 +74,33 @@ public class ConfigParser {
 
     public String getScriptsPath() { return scriptsPath; }
 
-    private void determineConfiguration(String databaseXmlPath, String jdbcUrlOverride, String usernameOverride, String passwordOverride) throws DBPatcherException {
+    private void determineConfiguration(Arguments arguments) throws DBPatcherException {
 
-        File xmlFile = getDatabaseXmlFile(databaseXmlPath);
+        File xmlFile = getDatabaseXmlFile(arguments.getDatabaseXmlPath());
         Database database = getDatabaseXml(xmlFile);
 
         LOG.info(" Using configuration:");
 
         printConfiguration("Database xml file", getCanonicalPath(xmlFile));
 
-        this.jdbcUrl = getOptionalValue("JDBC URL", database.getJdbcUrl(), jdbcUrlOverride);
-        this.username = getOptionalValue("Username", database.getUsername(), usernameOverride);
-        this.password = getOptionalValue("Password", database.getPassword(), passwordOverride, true);
+        Connection connection = database.getConnection();
 
-        if (StringUtils.isEmpty(this.jdbcUrl))
-            throw new DBPatcherException("Empty JDBC URL");
+        this.hostname = getOptionalValue("Hostname", whenNotNull(connection, t -> t.getHostname()), arguments.getHostOverride());
+        String port = getOptionalValue("Port", whenNotNull(connection, t -> Integer.toString(t.getPort())), arguments.getPortOverride());
+        this.databaseName = getOptionalValue("Database name", whenNotNull(connection, t -> t.getDatabaseName()), arguments.getDbNameOverride());
+        this.username = getOptionalValue("Username", whenNotNull(connection, t -> t.getUsername()), arguments.getUsernameOverride());
+        this.password = getOptionalValue("Password", whenNotNull(connection, t -> t.getPassword()), arguments.getPasswordOverride(), true);
+
+        if (StringUtils.isEmpty(this.hostname))
+            throw new DBPatcherException("Empty hostname");
+
+        if (StringUtils.isEmpty(port))
+            throw new DBPatcherException("Empty port");
+
+        this.port = Integer.parseInt(port);
+
+        if (StringUtils.isEmpty(port))
+            throw new DBPatcherException("Empty database name");
 
         if (StringUtils.isEmpty(this.username))
             throw new DBPatcherException("Empty username");
@@ -87,6 +112,13 @@ public class ConfigParser {
         this.functionsPath = getAndPrintCanonicalPath("functions", database.getPaths().getFunctions());
         this.triggersPath = getAndPrintCanonicalPath("triggers", database.getPaths().getTriggers());
         this.scriptsPath = getAndPrintCanonicalPath("scripts", database.getPaths().getScripts());
+    }
+
+    private <T, R> R whenNotNull(T obj, Function<T, R> func) {
+        if (obj != null)
+            return func.apply(obj);
+
+        return null;
     }
 
     public void patch() {

@@ -1,4 +1,4 @@
-package org.endeavourhealth.dbpatcher;
+package org.endeavourhealth.dbpatcher.dataLayer;
 
 import org.apache.commons.lang3.StringUtils;
 import org.endeavourhealth.dbpatcher.helpers.ResourceHelper;

@@ -24,7 +24,7 @@ import javax.xml.namespace.QName;
 @XmlRegistry
 public class ObjectFactory {
 
-    private final static QName _Type_QNAME = new QName("", "Type");
+    private final static QName _DatabaseType_QNAME = new QName("", "DatabaseType");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.endeavourhealth.dbpatcher.configuration
@@ -42,6 +42,14 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link Connection }
+     * 
+     */
+    public Connection createConnection() {
+        return new Connection();
+    }
+
+    /**
      * Create an instance of {@link Paths }
      * 
      */
@@ -53,9 +61,9 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "", name = "Type")
-    public JAXBElement<String> createType(String value) {
-        return new JAXBElement<String>(_Type_QNAME, String.class, null, value);
+    @XmlElementDecl(namespace = "", name = "DatabaseType")
+    public JAXBElement<String> createDatabaseType(String value) {
+        return new JAXBElement<String>(_DatabaseType_QNAME, String.class, null, value);
     }
 
 }

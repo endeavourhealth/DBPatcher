@@ -1,12 +1,15 @@
 <Database>
-    <Name>testdb</Name>
-    <JdbcUrl>jdbc:postgresql://localhost:5432/testdb</JdbcUrl>
-    <Username>postgres</Username>
-    <Password></Password>
+    <DisplayName>testdb</DisplayName>
+    <DatabaseType>postgresql</DatabaseType>
+    <Connection>
+        <Hostname>localhost</Hostname>
+        <Port>5432</Port>
+        <DatabaseName>testdb</DatabaseName>
+        <Username>postgres</Username>
+        <Password></Password>
+    </Connection>
     <Paths>
         <Schema>schema</Schema>
-        <!--<Functions>functions</Functions>-->
-        <!--<Triggers>triggers</Triggers>-->
-        <!--<Scripts>scripts</Scripts>-->
+        <Functions>functions</Functions>
     </Paths>
 </Database>

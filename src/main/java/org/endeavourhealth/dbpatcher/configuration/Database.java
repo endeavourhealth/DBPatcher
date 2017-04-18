@@ -18,10 +18,9 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="Name" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="JdbcUrl" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="Username" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="Password" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="DisplayName" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element ref="{}DatabaseType"/>
+ *         &lt;element ref="{}Connection" minOccurs="0"/>
  *         &lt;element ref="{}Paths"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -33,120 +32,93 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-    "name",
-    "jdbcUrl",
-    "username",
-    "password",
+    "displayName",
+    "databaseType",
+    "connection",
     "paths"
 })
 @XmlRootElement(name = "Database")
 public class Database {
 
-    @XmlElement(name = "Name", required = true)
-    protected String name;
-    @XmlElement(name = "JdbcUrl")
-    protected String jdbcUrl;
-    @XmlElement(name = "Username")
-    protected String username;
-    @XmlElement(name = "Password")
-    protected String password;
+    @XmlElement(name = "DisplayName", required = true)
+    protected String displayName;
+    @XmlElement(name = "DatabaseType", required = true)
+    protected String databaseType;
+    @XmlElement(name = "Connection")
+    protected Connection connection;
     @XmlElement(name = "Paths", required = true)
     protected Paths paths;
 
     /**
-     * Gets the value of the name property.
+     * Gets the value of the displayName property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getName() {
-        return name;
+    public String getDisplayName() {
+        return displayName;
     }
 
     /**
-     * Sets the value of the name property.
+     * Sets the value of the displayName property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setName(String value) {
-        this.name = value;
+    public void setDisplayName(String value) {
+        this.displayName = value;
     }
 
     /**
-     * Gets the value of the jdbcUrl property.
+     * Gets the value of the databaseType property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getJdbcUrl() {
-        return jdbcUrl;
+    public String getDatabaseType() {
+        return databaseType;
     }
 
     /**
-     * Sets the value of the jdbcUrl property.
+     * Sets the value of the databaseType property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setJdbcUrl(String value) {
-        this.jdbcUrl = value;
+    public void setDatabaseType(String value) {
+        this.databaseType = value;
     }
 
     /**
-     * Gets the value of the username property.
+     * Gets the value of the connection property.
      * 
      * @return
      *     possible object is
-     *     {@link String }
+     *     {@link Connection }
      *     
      */
-    public String getUsername() {
-        return username;
+    public Connection getConnection() {
+        return connection;
     }
 
     /**
-     * Sets the value of the username property.
+     * Sets the value of the connection property.
      * 
      * @param value
      *     allowed object is
-     *     {@link String }
+     *     {@link Connection }
      *     
      */
-    public void setUsername(String value) {
-        this.username = value;
-    }
-
-    /**
-     * Gets the value of the password property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getPassword() {
-        return password;
-    }
-
-    /**
-     * Sets the value of the password property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setPassword(String value) {
-        this.password = value;
+    public void setConnection(Connection value) {
+        this.connection = value;
     }
 
     /**

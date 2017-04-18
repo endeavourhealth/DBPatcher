@@ -1,4 +1,4 @@
-package org.endeavourhealth.dbpatcher;
+package org.endeavourhealth.dbpatcher.exceptions;
 
 public class DBPatcherException extends Exception {
     static final long serialVersionUID = 1L;

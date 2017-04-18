@@ -2,6 +2,8 @@ package org.endeavourhealth.dbpatcher;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -9,6 +11,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class Main {
+
+    private static final Logger LOG = LoggerFactory.getLogger(Main.class);
 
     private final static String ARG_HELP = "--help";
     private final static String ARG_URL = "--url";

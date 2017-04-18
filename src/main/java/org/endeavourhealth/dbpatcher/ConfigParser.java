@@ -77,9 +77,9 @@ public class ConfigParser {
         this.basePath = xmlFile.getParentFile().getPath();
         printPath("base", this.basePath);
 
-        this.schemaPath = getAndPrintCanonicalPath("testdb/schema", database.getPaths().getSchema());
-        this.functionsPath = getAndPrintCanonicalPath("testdb/functions", database.getPaths().getFunctions());
-        this.triggersPath = getAndPrintCanonicalPath("testdb/triggers", database.getPaths().getTriggers());
+        this.schemaPath = getAndPrintCanonicalPath("schema", database.getPaths().getSchema());
+        this.functionsPath = getAndPrintCanonicalPath("functions", database.getPaths().getFunctions());
+        this.triggersPath = getAndPrintCanonicalPath("triggers", database.getPaths().getTriggers());
     }
 
     public void patch() {

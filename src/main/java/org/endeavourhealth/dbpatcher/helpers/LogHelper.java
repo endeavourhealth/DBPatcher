@@ -35,6 +35,10 @@ public class LogHelper {
         logger.error(line, var2);
     }
 
+    public void error(Exception e) {
+        logger.error("", e);
+    }
+
     public void info(List<String> lines, String linePrefix) {
 
     }

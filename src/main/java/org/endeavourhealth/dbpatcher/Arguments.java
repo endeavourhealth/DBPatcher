@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 
 public class Arguments {
     public final static String ARG_HELP = "--help";
+    public final static String ARG_SAMPLE_XML = "--generatesamplexml";
     public final static String ARG_HOST = "--host";
     public final static String ARG_PORT = "--port";
     public final static String ARG_DBNAME = "--db";
@@ -52,10 +53,10 @@ public class Arguments {
         }
     }
 
-    public static boolean hasHelpArg(String[] args) {
+    public static boolean hasArg(String[] args, String arg) {
         return Arrays
                 .stream(args)
-                .anyMatch(t -> t.equals(Arguments.ARG_HELP));
+                .anyMatch(t -> t.equals(arg));
     }
 
     public String getDatabaseXmlPath() {

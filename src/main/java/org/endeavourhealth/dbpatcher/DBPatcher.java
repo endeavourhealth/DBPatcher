@@ -22,11 +22,11 @@ public class DBPatcher extends FlywayCallback {
     private static LogHelper LOG = LogHelper.getLogger(DBPatcher.class);
     private static final String POSTGRES_MASTER_DB = "postgres";
 
-    private ConfigParser configParser;
+    private Configuration configuration;
     private DataLayer dataLayer;
 
     public DBPatcher(Arguments arguments) throws DBPatcherException {
-        this.configParser = new ConfigParser(arguments);
+        this.configuration = new Configuration(arguments);
     }
 
     public void patch() throws IOException, SQLException, DBPatcherException {
@@ -40,37 +40,37 @@ public class DBPatcher extends FlywayCallback {
 
         LOG.infoWithDivider("Looking for database");
 
-        if (!masterDataLayer.doesDatabaseExist(this.configParser.getDatabaseName())) {
-            LOG.info("> Could not find database '" + this.configParser.getDatabaseName() + "', create database?");
+        if (!masterDataLayer.doesDatabaseExist(this.configuration.getDatabaseName())) {
+            LOG.info("> Could not find database '" + this.configuration.getDatabaseName() + "', create database?");
 
             if (!ConsoleHelper.readYesNoFromConsole())
-                throw new DBPatcherException("Database '" + this.configParser.getDatabaseName() + "' does not exist");
+                throw new DBPatcherException("Database '" + this.configuration.getDatabaseName() + "' does not exist");
 
-            LOG.info("Creating database '" + this.configParser.getDatabaseName() + "'");
-            masterDataLayer.createDatabase(this.configParser.getDatabaseName());
+            LOG.info("Creating database '" + this.configuration.getDatabaseName() + "'");
+            masterDataLayer.createDatabase(this.configuration.getDatabaseName());
         } else {
-            LOG.info("Database '" + this.configParser.getDatabaseName() + "' found");
+            LOG.info("Database '" + this.configuration.getDatabaseName() + "' found");
         }
     }
 
     private PGSimpleDataSource getDataSource(String databaseName) {
         PGSimpleDataSource pgSimpleDataSource = new PGSimpleDataSource();
-        pgSimpleDataSource.setServerName(configParser.getHostname());
-        pgSimpleDataSource.setPortNumber(configParser.getPort());
+        pgSimpleDataSource.setServerName(configuration.getHostname());
+        pgSimpleDataSource.setPortNumber(configuration.getPort());
         pgSimpleDataSource.setDatabaseName(databaseName);
-        pgSimpleDataSource.setUser(configParser.getUsername());
-        pgSimpleDataSource.setPassword(configParser.getPassword());
+        pgSimpleDataSource.setUser(configuration.getUsername());
+        pgSimpleDataSource.setPassword(configuration.getPassword());
         return pgSimpleDataSource;
     }
 
     private void startFlyway() {
         LOG.infoWithDivider("Calling flyway to commence patching...");
 
-        DataSource dataSource = getDataSource(configParser.getDatabaseName());
+        DataSource dataSource = getDataSource(configuration.getDatabaseName());
 
         Flyway flyway = new Flyway();
         flyway.setDataSource(dataSource);
-        flyway.setLocations("filesystem:" + configParser.getSchemaPath());
+        flyway.setLocations("filesystem:" + configuration.getSchemaPath());
         flyway.setSqlMigrationSeparator("-");
         flyway.setCallbacks(this);
         flyway.migrate();
@@ -86,7 +86,7 @@ public class DBPatcher extends FlywayCallback {
     @Override
     public void afterMigrate(Connection connection) {
         try {
-            if (configParser.getFunctionsPath() != null) {
+            if (configuration.getFunctionsPath() != null) {
                 LOG.infoWithDivider("Applying functions");
                 dropUserFunctions();
                 applyUserFunctions();
@@ -125,7 +125,7 @@ public class DBPatcher extends FlywayCallback {
     }
 
     private void applyUserFunctions() throws SQLException, IOException {
-        List<File> functionsToApply = FileHelper.findSqlFilesRecursive(configParser.getFunctionsPath());
+        List<File> functionsToApply = FileHelper.findSqlFilesRecursive(configuration.getFunctionsPath());
 
         if (functionsToApply.size() == 0)
             return;

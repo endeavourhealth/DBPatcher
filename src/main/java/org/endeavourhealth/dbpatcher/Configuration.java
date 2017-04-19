@@ -3,8 +3,8 @@ package org.endeavourhealth.dbpatcher;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
-import org.endeavourhealth.dbpatcher.configuration.Connection;
-import org.endeavourhealth.dbpatcher.configuration.Database;
+import org.endeavourhealth.dbpatcher.databaseXml.Connection;
+import org.endeavourhealth.dbpatcher.databaseXml.Database;
 import org.endeavourhealth.dbpatcher.exceptions.DBPatcherException;
 import org.endeavourhealth.dbpatcher.helpers.LogHelper;
 import org.endeavourhealth.dbpatcher.helpers.ResourceHelper;
@@ -16,10 +16,10 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.function.Function;
 
-public class ConfigParser {
+public class Configuration {
     private final static String DATABASE_SCHEMA_FILENAME = "database.xsd";
 
-    private final static LogHelper LOG = LogHelper.getLogger(ConfigParser.class);
+    private final static LogHelper LOG = LogHelper.getLogger(Configuration.class);
 
     private String hostname;
     private int port;
@@ -32,7 +32,7 @@ public class ConfigParser {
     private String triggersPath;
     private String scriptsPath;
 
-    public ConfigParser(Arguments arguments) throws DBPatcherException {
+    public Configuration(Arguments arguments) throws DBPatcherException {
         determineConfiguration(arguments);
     }
 

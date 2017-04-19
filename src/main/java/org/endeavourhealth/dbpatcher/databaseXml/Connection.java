@@ -1,5 +1,5 @@
 
-package org.endeavourhealth.dbpatcher.configuration;
+package org.endeavourhealth.dbpatcher.databaseXml;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;

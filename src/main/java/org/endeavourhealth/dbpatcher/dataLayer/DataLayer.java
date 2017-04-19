@@ -56,7 +56,7 @@ public class DataLayer {
         executeStatement(sqlBatch);
     }
 
-    public void applyFunction(String functionSql) throws SQLException {
+    public void executeSql(String functionSql) throws SQLException {
         executeStatement(functionSql);
     }
 

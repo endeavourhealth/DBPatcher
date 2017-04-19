@@ -92,12 +92,47 @@ public class DBPatcher extends FlywayCallback {
                 if (configuration.getDropFunctions())
                     dropUserFunctions();
 
-                applyUserFunctions();
+                applySqlItems(configuration.getFunctionsPath(), "user function(s)");
+            }
+
+            if (configuration.getScriptsPath() != null) {
+                LOG.infoWithDivider("Applying scripts");
+
+                applySqlItems(configuration.getScriptsPath(), "script(s)");
             }
 
         } catch (Exception e) {
             throw new DBPatcherRuntimeException(e.getMessage(), e);
         }
+    }
+
+    private void applySqlItems(String path, String itemType) throws Exception {
+        List<File> sqlItemsToApply = FileHelper.findSqlFilesRecursive(path);
+
+        if (sqlItemsToApply.size() == 0)
+            return;
+
+        LOG.info("Applying " + Integer.toString(sqlItemsToApply.size()) + " " + itemType + ":");
+        LOG.info("");
+
+        int count = 1;
+        for (File file : sqlItemsToApply) {
+            printNumberedListItem(file.getName(), count++);
+
+            String sql = FileHelper.readUtf8ToString(file);
+            dataLayer.executeSql(sql);
+        }
+    }
+
+    private void printNumberedList(List<String> items) {
+        int count = 1;
+
+        for (String item : items)
+            printNumberedListItem(item, count++);
+    }
+
+    private void printNumberedListItem(String item, int number) {
+        LOG.info(" " + Integer.toString(number) + ". " + item);
     }
 
     private void dropUserFunctions() throws Exception {
@@ -136,34 +171,5 @@ public class DBPatcher extends FlywayCallback {
         }
 
         LOG.info("");
-    }
-
-    private void printNumberedList(List<String> items) {
-        int count = 1;
-
-        for (String item : items)
-            printNumberedListItem(item, count++);
-    }
-
-    private void printNumberedListItem(String item, int number) {
-        LOG.info(" " + Integer.toString(number) + ". " + item);
-    }
-
-    private void applyUserFunctions() throws SQLException, IOException {
-        List<File> functionsToApply = FileHelper.findSqlFilesRecursive(configuration.getFunctionsPath());
-
-        if (functionsToApply.size() == 0)
-            return;
-
-        LOG.info("Applying " + Integer.toString(functionsToApply.size()) + " user function(s):");
-        LOG.info("");
-
-        int count = 1;
-        for (File file : functionsToApply) {
-            printNumberedListItem(file.getName(), count++);
-
-            String sql = FileHelper.readUtf8ToString(file);
-            dataLayer.applyFunction(sql);
-        }
     }
 }

@@ -11,5 +11,6 @@
     <Paths>
         <Schema>schema</Schema>
         <Functions>functions</Functions>
+        <Scripts>scripts</Scripts>
     </Paths>
 </Database>

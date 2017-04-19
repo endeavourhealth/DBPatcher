@@ -168,6 +168,9 @@ public class Configuration {
         if (relativePathValue == null)
             return null;
 
+        if (StringUtils.isEmpty(relativePathValue))
+            throw new DBPatcherException(WordUtils.capitalize(pathName) + " path is empty");
+
         File path = new File(Paths.get(this.basePath, relativePathValue).toString());
 
         if (!path.isDirectory() || (!path.exists()))

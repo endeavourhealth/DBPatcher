@@ -5,10 +5,9 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.ConsoleAppender;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.endeavourhealth.dbpatcher.helpers.Argument;
 import org.endeavourhealth.dbpatcher.helpers.FileHelper;
 import org.endeavourhealth.dbpatcher.helpers.LogHelper;
 import org.endeavourhealth.dbpatcher.helpers.ResourceHelper;
@@ -24,12 +23,12 @@ public class Main {
 
             LOG.infoWithDivider("DBPatcher v1.0");
 
-            if (ArrayUtils.isEmpty(args) || (Arguments.hasArg(args, Arguments.ARG_HELP))) {
+            if (ArrayUtils.isEmpty(args) || (Argument.hasArg(args, Arguments.ARG_HELP))) {
                 printHelp();
                 return;
             }
 
-            if (Arguments.hasArg(args, Arguments.ARG_SAMPLE_XML)) {
+            if (Argument.hasArg(args, Arguments.ARG_SAMPLE_XML)) {
                 generateSampleXml();
                 return;
             }
@@ -55,19 +54,21 @@ public class Main {
 
     private static void printHelp() {
         LOG.info("");
-        LOG.info(" usage:  java -jar DBPatcher.jar database.xml [options]");
-        //LOG.info(" usage:  java -jar DBPatcher.jar database.zip [options]");
+        LOG.info(" usage:  java -jar DBPatcher.jar DB_XML_FILE [options]");
+        LOG.info("    or:  java -jar DBPatcher.jar ZIP_FILE [options]");
         LOG.info("");
-        LOG.info(" options:  " + padHelpArg(Arguments.ARG_HOST + "=hostname") + "Overrides Connection/Hostname");
-        LOG.info("           " + padHelpArg(Arguments.ARG_PORT + "=port") + "Overrides Connection/Port");
-        LOG.info("           " + padHelpArg(Arguments.ARG_DBNAME + "=dbname") + "Overrides Connection/DatabaseName");
-        LOG.info("           " + padHelpArg(Arguments.ARG_USERNAME + "=username") + "Overrides Connection/Username");
-        LOG.info("           " + padHelpArg(Arguments.ARG_PASSWORD + "=password") + "Overrides Connection/Password");
+        LOG.info(" options:  " + padHelpArg(Arguments.ARG_HOST + "=hostname") + "Override hostname in DB_XML_FILE");
+        LOG.info("           " + padHelpArg(Arguments.ARG_PORT + "=port") + "Override port in DB_XML_FILE");
+        LOG.info("           " + padHelpArg(Arguments.ARG_DBNAME + "=dbname") + "Override databasename in DB_XML_FILE");
+        LOG.info("           " + padHelpArg(Arguments.ARG_USERNAME + "=username") + "Override username in DB_XML_FILE");
+        LOG.info("           " + padHelpArg(Arguments.ARG_PASSWORD + "=password") + "Override password in DB_XML_FILE");
         LOG.info("");
-        LOG.info("           " + padHelpArg(Arguments.ARG_DROPFNS) + "Prompts to drop all user functions before applying functions in Paths/Functions");
-        LOG.info("           " + padHelpArg(Arguments.ARG_AUTODROPFNS) + "Automatically drops all user functions before applying functions in Paths/Functions");
+        LOG.info("           " + padHelpArg(Arguments.ARG_XML + "=DB_XML_FILE") + "Specify DB_XML_FILE file name in root of ZIP file; default database.xml");
         LOG.info("");
-        LOG.info("           " + padHelpArg(Arguments.ARG_SAMPLE_XML) + "Write sample-database.xml file in current dir");
+        LOG.info("           " + padHelpArg(Arguments.ARG_DROPFNS) + "Prompts to drop all functions before applying fns in DB_XML_FILE");
+        LOG.info("           " + padHelpArg(Arguments.ARG_AUTODROPFNS) + "Automatically drops all functions before applying fns in DB_XML_FILE");
+        LOG.info("");
+        LOG.info("           " + padHelpArg(Arguments.ARG_SAMPLE_XML) + "Write sample DB_XML_FILE file in current dir");
         LOG.info("           " + padHelpArg(Arguments.ARG_HELP) + "Print this message");
         LOG.info("");
     }

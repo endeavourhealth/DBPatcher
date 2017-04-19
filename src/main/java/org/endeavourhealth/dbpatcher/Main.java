@@ -39,9 +39,9 @@ public class Main {
         }
 
         try {
-            Arguments arguments = new Arguments(args);
+            Configuration configuration = Configuration.processConfiguration(args);
 
-            DBPatcher dbPatcher = new DBPatcher(arguments);
+            DBPatcher dbPatcher = new DBPatcher(configuration);
             dbPatcher.patch();
 
             LOG.infoWithDivider("PATCH SUCCESS");

@@ -18,7 +18,7 @@ public class Arguments {
     public final static String ARG_DROPFNS = "--dropfns";
     public final static String ARG_AUTODROPFNS = "--autodropfns";
 
-    private String databaseXmlPath;
+    private String targetFilePath;
     private String hostOverride;
     private String portOverride;
     private String dbNameOverride;
@@ -39,7 +39,7 @@ public class Arguments {
         if (firstArgument.getArg().startsWith("-"))
             throw new DBPatcherException("Expecting DB_XML_FILE or ZIP_FILE in place of '" + firstArgument.getArg() + "'");
 
-        this.databaseXmlPath = firstArgument.getArg();
+        this.targetFilePath = firstArgument.getArg();
 
         for (Argument argument : arguments) {
 
@@ -56,8 +56,8 @@ public class Arguments {
         }
     }
 
-    public String getDatabaseXmlPath() {
-        return databaseXmlPath;
+    public String getTargetFilePath() {
+        return targetFilePath;
     }
     public String getHostOverride() {
         return hostOverride;

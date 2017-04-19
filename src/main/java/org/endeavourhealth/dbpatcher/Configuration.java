@@ -35,111 +35,124 @@ public class Configuration {
     private boolean dropFunctions;
     private boolean autoDropFunctions;
 
-    public Configuration(Arguments arguments) throws DBPatcherException {
-        determineConfiguration(arguments);
+    private Configuration() {
     }
 
     public String getHostname() {
         return hostname;
     }
-
     public int getPort() {
         return port;
     }
-
     public String getDatabaseName() {
         return databaseName;
     }
-
     public String getUsername() {
         return username;
     }
-
     public String getPassword() {
         return password;
     }
-
     public String getBasePath() {
         return basePath;
     }
-
     public String getSchemaPath() {
         return schemaPath;
     }
-
     public String getFunctionsPath() {
         return functionsPath;
     }
-
     public String getTriggersPath() {
         return triggersPath;
     }
-
     public String getScriptsPath() { return scriptsPath; }
-
     public boolean getDropFunctions() {
         return (dropFunctions || autoDropFunctions);
     }
-
     public boolean getAutoDropFunctions() {
         return autoDropFunctions;
     }
 
-    private void determineConfiguration(Arguments arguments) throws DBPatcherException {
+    public static Configuration processConfiguration(String[] args) throws DBPatcherException {
+        Arguments arguments = new Arguments(args);
 
-        File xmlFile = getDatabaseXmlFile(arguments.getDatabaseXmlPath());
+        File xmlFile = getDatabaseXmlFile(arguments.getTargetFilePath());
         Database database = getDatabaseXml(xmlFile);
 
         LOG.info("Using configuration:");
 
         printConfiguration("Database xml file", getCanonicalPath(xmlFile));
 
+        Configuration configuration = new Configuration();
+
         Connection connection = database.getConnection();
 
-        this.hostname = getOptionalValue("Hostname", whenNotNull(connection, t -> t.getHostname()), arguments.getHostOverride());
-        String port = getOptionalValue("Port", whenNotNull(connection, t -> Integer.toString(t.getPort())), arguments.getPortOverride());
-        this.databaseName = getOptionalValue("Database name", whenNotNull(connection, t -> t.getDatabaseName()), arguments.getDbNameOverride());
-        this.username = getOptionalValue("Username", whenNotNull(connection, t -> t.getUsername()), arguments.getUsernameOverride());
-        this.password = getOptionalValue("Password", whenNotNull(connection, t -> t.getPassword()), arguments.getPasswordOverride(), true);
+        configuration.hostname = getAndPrintOptionalValue(
+                "Hostname",
+                whenNotNull(connection, t -> t.getHostname()),
+                arguments.getHostOverride());
 
-        if (StringUtils.isEmpty(this.hostname))
+        String port = getAndPrintOptionalValue(
+                "Port",
+                whenNotNull(connection, t -> Integer.toString(t.getPort())),
+                arguments.getPortOverride());
+
+        configuration.databaseName = getAndPrintOptionalValue(
+                "Database name",
+                whenNotNull(connection, t -> t.getDatabaseName()),
+                arguments.getDbNameOverride());
+
+        configuration.username = getAndPrintOptionalValue(
+                "Username",
+                whenNotNull(connection, t -> t.getUsername()),
+                arguments.getUsernameOverride());
+
+        configuration.password = getAndPrintOptionalValue(
+                "Password",
+                whenNotNull(connection, t -> t.getPassword()),
+                arguments.getPasswordOverride(),
+                true);
+
+        if (StringUtils.isEmpty(configuration.hostname))
             throw new DBPatcherException("Empty hostname");
 
         if (StringUtils.isEmpty(port))
             throw new DBPatcherException("Empty port");
 
-        this.port = Integer.parseInt(port);
+        configuration.port = Integer.parseInt(port);
 
         if (StringUtils.isEmpty(port))
             throw new DBPatcherException("Empty database name");
 
-        if (StringUtils.isEmpty(this.username))
+        if (StringUtils.isEmpty(configuration.username))
             throw new DBPatcherException("Empty username");
 
-        this.basePath = xmlFile.getParentFile().getPath();
-        printPath("base", this.basePath);
+        configuration.basePath = xmlFile.getParentFile().getPath();
+        printPath("base", configuration.basePath);
 
-        this.schemaPath = getAndPrintCanonicalPath("schema", database.getPaths().getSchema());
-        this.functionsPath = getAndPrintCanonicalPath("functions", database.getPaths().getFunctions());
-        this.triggersPath = getAndPrintCanonicalPath("triggers", database.getPaths().getTriggers());
-        this.scriptsPath = getAndPrintCanonicalPath("scripts", database.getPaths().getScripts());
+        configuration.schemaPath = getAndPrintCanonicalPath("schema", configuration.basePath, database.getPaths().getSchema());
+        configuration.functionsPath = getAndPrintCanonicalPath("functions", configuration.basePath, database.getPaths().getFunctions());
+        configuration.triggersPath = getAndPrintCanonicalPath("triggers", configuration.basePath, database.getPaths().getTriggers());
+        configuration.scriptsPath = getAndPrintCanonicalPath("scripts", configuration.basePath, database.getPaths().getScripts());
 
-        this.dropFunctions = arguments.getDropFunctions();
-        this.autoDropFunctions = arguments.getAutoDropFunctions();
+        configuration.dropFunctions = arguments.getDropFunctions();
+        configuration.autoDropFunctions = arguments.getAutoDropFunctions();
+
+        return configuration;
     }
 
-    private <T, R> R whenNotNull(T obj, Function<T, R> func) {
+    private static <T, R> R whenNotNull(T obj, Function<T, R> func) {
         if (obj != null)
             return func.apply(obj);
 
         return null;
     }
 
-    private String getOptionalValue(String valueName, String value, String overriddenValue) {
-        return getOptionalValue(valueName, value, overriddenValue, false);
+    private static String getAndPrintOptionalValue(String valueName, String value, String overriddenValue) {
+        return getAndPrintOptionalValue(valueName, value, overriddenValue, false);
     }
 
-    private String getOptionalValue(String valueName, String value, String overriddenValue, boolean hidePrintedValue) {
+    private static String getAndPrintOptionalValue(String valueName, String value, String overriddenValue, boolean hidePrintedValue) {
         if (overriddenValue != null) {
             printConfiguration(valueName + " (overridden)", overriddenValue, hidePrintedValue);
             return overriddenValue;
@@ -149,27 +162,27 @@ public class Configuration {
         return value;
     }
 
-    private void printConfiguration(String name, String value) {
+    private static void printConfiguration(String name, String value) {
         printConfiguration(name, value, false);
     }
 
-    private void printConfiguration(String name, String value, boolean hideValue) {
+    private static void printConfiguration(String name, String value, boolean hideValue) {
         String printedValue = value;
 
         if (hideValue)
             printedValue = "(value hidden)";
 
-        LOG.info(" " + StringUtils.rightPad(name + ":  ", 27) + printedValue);
+        LOG.info(" " + StringUtils.rightPad(name + ":  ", 30) + printedValue);
     }
 
-    private String getAndPrintCanonicalPath(String pathName, String relativePathValue) throws DBPatcherException {
+    private static String getAndPrintCanonicalPath(String pathName, String basePath, String relativePathValue) throws DBPatcherException {
         if (relativePathValue == null)
             return null;
 
         if (StringUtils.isEmpty(relativePathValue))
             throw new DBPatcherException(WordUtils.capitalize(pathName) + " path is empty");
 
-        File path = new File(Paths.get(this.basePath, relativePathValue).toString());
+        File path = new File(Paths.get(basePath, relativePathValue).toString());
 
         if (!path.isDirectory() || (!path.exists()))
             throw new DBPatcherException("Could not find " + pathName + " path '" + getCanonicalPath(path) + "'");
@@ -179,7 +192,7 @@ public class Configuration {
         return getCanonicalPath(path);
     }
 
-    private void printPath(String pathName, String pathValue) throws DBPatcherException {
+    private static void printPath(String pathName, String pathValue) throws DBPatcherException {
         printConfiguration(WordUtils.capitalize(pathName) + " path", getCanonicalPath(new File(pathValue)));
     }
 

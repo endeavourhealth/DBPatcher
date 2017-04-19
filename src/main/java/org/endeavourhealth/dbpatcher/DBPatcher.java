@@ -24,8 +24,8 @@ public class DBPatcher extends FlywayCallback {
     private Configuration configuration;
     private DataLayer dataLayer;
 
-    public DBPatcher(Arguments arguments) throws DBPatcherException {
-        this.configuration = new Configuration(arguments);
+    public DBPatcher(Configuration configuration) {
+        this.configuration = configuration;
     }
 
     public void patch() throws Exception {

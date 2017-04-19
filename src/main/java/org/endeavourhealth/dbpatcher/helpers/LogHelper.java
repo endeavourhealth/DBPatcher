@@ -23,10 +23,6 @@ public class LogHelper {
         logger.info(line);
     }
 
-    public void info(List<String> lines) {
-        info(lines, "");
-    }
-
     public void error(String line) {
         logger.error(line);
     }
@@ -39,8 +35,15 @@ public class LogHelper {
         logger.error("", e);
     }
 
-    public void info(List<String> lines, String linePrefix) {
+    public void printNumberedList(List<String> items) {
+        int count = 1;
 
+        for (String item : items)
+            printNumberedListItem(item, count++);
+    }
+
+    public void printNumberedListItem(String item, int number) {
+        info(" " + Integer.toString(number) + ". " + item);
     }
 
     public void infoDivider() {

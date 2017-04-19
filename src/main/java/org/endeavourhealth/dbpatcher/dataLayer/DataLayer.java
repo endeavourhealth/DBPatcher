@@ -1,6 +1,8 @@
 package org.endeavourhealth.dbpatcher.dataLayer;
 
 import org.apache.commons.lang3.StringUtils;
+import org.endeavourhealth.dbpatcher.dataLayer.model.Function;
+import org.endeavourhealth.dbpatcher.dataLayer.model.Trigger;
 import org.endeavourhealth.dbpatcher.helpers.ResourceHelper;
 
 import java.sql.Connection;
@@ -24,34 +26,62 @@ public class DataLayer {
         return statement;
     }
 
-    public List<String> getUserFunctionSignatures() throws Exception {
+    public List<Function> getUserFunctions() throws Exception {
         try (Statement statement = createStatement()) {
 
             String sql = ResourceHelper.getResourceAsString("postgresql/get-user-functions.sql");
 
-            try (ResultSet resultset = statement.executeQuery(sql)) {
+            try (ResultSet resultSet = statement.executeQuery(sql)) {
 
-                List<String> functions = new ArrayList<>();
+                List<Function> functions = new ArrayList<>();
 
-                while (resultset.next())
-                    functions.add(resultset.getString("proc_name"));
+                while (resultSet.next()) {
+                    Function function = new Function()
+                            .setFunctionSignature(resultSet.getString("function_signature"));
+
+                    functions.add(function);
+                }
 
                 return functions;
             }
         }
     }
 
-    public void dropUserFunctions(List<String> functionSignatures) throws Exception {
+    public List<Trigger> getUserTriggers() throws Exception {
+        try (Statement statement = createStatement()) {
+
+            String sql = ResourceHelper.getResourceAsString("postgresql/get-user-triggers.sql");
+
+            try (ResultSet resultSet = statement.executeQuery(sql)) {
+
+                List<Trigger> triggers = new ArrayList<>();
+
+                while (resultSet.next()) {
+                    Trigger trigger = new Trigger()
+                            .setTriggerName(resultSet.getString("trigger_name"))
+                            .setType(resultSet.getString("trigger_type"))
+                            .setTable(resultSet.getString("trigger_table"))
+                            .setEvent(resultSet.getString("trigger_event"))
+                            .setLevel(resultSet.getString("trigger_level"))
+                            .setShortDescription("short_description")
+                            .setDescription("description");
+
+                    triggers.add(trigger);
+                }
+
+                return triggers;
+            }
+        }
+    }
+
+    public void dropUserFunctions(List<Function> functions) throws Exception {
 
         String sql = ResourceHelper.getResourceAsString("postgresql/drop-function.sql");
 
         String sqlBatch = "";
 
-        for (String functionSignature : functionSignatures)
-            sqlBatch += MessageFormat.format(sql, functionSignature) + "\n";
-
-        if (StringUtils.isBlank(sqlBatch))
-            return;
+        for (Function function : functions)
+            sqlBatch += MessageFormat.format(sql, function.getFunctionSignature()) + "\n";
 
         executeStatement(sqlBatch);
     }
@@ -61,6 +91,9 @@ public class DataLayer {
     }
 
     private void executeStatement(String sql) throws SQLException {
+        if (StringUtils.isBlank(sql))
+            return;
+
         try (Statement statement = connection.createStatement()) {
             statement.execute(sql);
         }

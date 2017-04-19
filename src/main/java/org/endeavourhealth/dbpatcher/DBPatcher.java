@@ -2,6 +2,7 @@ package org.endeavourhealth.dbpatcher;
 
 import org.endeavourhealth.dbpatcher.dataLayer.DataLayer;
 import org.endeavourhealth.dbpatcher.dataLayer.MasterDataLayer;
+import org.endeavourhealth.dbpatcher.dataLayer.model.Function;
 import org.endeavourhealth.dbpatcher.exceptions.DBPatcherException;
 import org.endeavourhealth.dbpatcher.exceptions.DBPatcherRuntimeException;
 import org.endeavourhealth.dbpatcher.helpers.ConsoleHelper;
@@ -14,6 +15,7 @@ import javax.sql.DataSource;
 import java.io.File;
 import java.sql.Connection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class DBPatcher extends FlywayCallback {
 
@@ -93,6 +95,12 @@ public class DBPatcher extends FlywayCallback {
                 applySqlItems(configuration.getFunctionsPath(), "user function(s)");
             }
 
+            if (configuration.getTriggersPath() != null) {
+                LOG.infoWithDivider("Applying triggers");
+
+                applySqlItems(configuration.getTriggersPath(), "trigger(s)");
+            }
+
             if (configuration.getScriptsPath() != null) {
                 LOG.infoWithDivider("Applying scripts");
 
@@ -115,27 +123,20 @@ public class DBPatcher extends FlywayCallback {
 
         int count = 1;
         for (File file : sqlItemsToApply) {
-            printNumberedListItem(file.getName(), count++);
+            LOG.printNumberedListItem(file.getName(), count++);
 
             String sql = FileHelper.readUtf8ToString(file);
             dataLayer.executeSql(sql);
         }
     }
 
-    private void printNumberedList(List<String> items) {
-        int count = 1;
-
-        for (String item : items)
-            printNumberedListItem(item, count++);
-    }
-
-    private void printNumberedListItem(String item, int number) {
-        LOG.info(" " + Integer.toString(number) + ". " + item);
-    }
-
     private void dropUserFunctions() throws Exception {
 
-        List<String> functionsToDrop = dataLayer.getUserFunctionSignatures();
+        List<Function> functionsToDrop = dataLayer.getUserFunctions();
+        List<String> functionSignaturesToDrop = functionsToDrop
+                .stream()
+                .map(t -> t.getFunctionSignature())
+                .collect(Collectors.toList());
 
         if (functionsToDrop.size() == 0)
             return;
@@ -150,7 +151,7 @@ public class DBPatcher extends FlywayCallback {
             LOG.info(question);
             LOG.info("");
 
-            printNumberedList(functionsToDrop);
+            LOG.printNumberedList(functionSignaturesToDrop);
 
             LOG.info("");
             LOG.info("> " + question);
@@ -161,9 +162,9 @@ public class DBPatcher extends FlywayCallback {
         }
 
         if (dropFunctions) {
-            LOG.info("Dropping existing user function(s):");
+            LOG.info("Dropping " + Integer.toString(functionsToDrop.size()) + " existing user function(s):");
             LOG.info("");
-            printNumberedList(functionsToDrop);
+            LOG.printNumberedList(functionSignaturesToDrop);
 
             dataLayer.dropUserFunctions(functionsToDrop);
         }

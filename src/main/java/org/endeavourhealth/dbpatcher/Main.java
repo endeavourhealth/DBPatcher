@@ -41,7 +41,7 @@ public class Main {
     private static void printHelp() {
         LOG.info("");
         LOG.info(" usage:  java -jar DBPatcher.jar database.xml [options]");
-        LOG.info(" usage:  java -jar DBPatcher.jar database.zip [options]");
+        //LOG.info(" usage:  java -jar DBPatcher.jar database.zip [options]");
         LOG.info("");
         LOG.info(" options:  " + padHelpArg(Arguments.ARG_HOST + "=hostname") + "Overrides Connection/Hostname");
         LOG.info("           " + padHelpArg(Arguments.ARG_PORT + "=port") + "Overrides Connection/Port");

@@ -31,6 +31,8 @@ public class Configuration {
     private String functionsPath;
     private String triggersPath;
     private String scriptsPath;
+    private boolean dropFunctions;
+    private boolean autoDropFunctions;
 
     public Configuration(Arguments arguments) throws DBPatcherException {
         determineConfiguration(arguments);
@@ -74,6 +76,14 @@ public class Configuration {
 
     public String getScriptsPath() { return scriptsPath; }
 
+    public boolean getDropFunctions() {
+        return (dropFunctions || autoDropFunctions);
+    }
+
+    public boolean getAutoDropFunctions() {
+        return autoDropFunctions;
+    }
+
     private void determineConfiguration(Arguments arguments) throws DBPatcherException {
 
         File xmlFile = getDatabaseXmlFile(arguments.getDatabaseXmlPath());
@@ -112,6 +122,9 @@ public class Configuration {
         this.functionsPath = getAndPrintCanonicalPath("functions", database.getPaths().getFunctions());
         this.triggersPath = getAndPrintCanonicalPath("triggers", database.getPaths().getTriggers());
         this.scriptsPath = getAndPrintCanonicalPath("scripts", database.getPaths().getScripts());
+
+        this.dropFunctions = arguments.getDropFunctions();
+        this.autoDropFunctions = arguments.getAutoDropFunctions();
     }
 
     private <T, R> R whenNotNull(T obj, Function<T, R> func) {

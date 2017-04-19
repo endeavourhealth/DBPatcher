@@ -15,6 +15,8 @@ public class Arguments {
     public final static String ARG_DBNAME = "--db";
     public final static String ARG_USERNAME = "--user";
     public final static String ARG_PASSWORD = "--pass";
+    public final static String ARG_DROPFNS = "--dropfns";
+    public final static String ARG_AUTODROPFNS = "--autodropfns";
 
     private String databaseXmlPath;
     private String hostOverride;
@@ -22,6 +24,8 @@ public class Arguments {
     private String dbNameOverride;
     private String usernameOverride;
     private String passwordOverride;
+    private boolean dropFunctions = false;
+    private boolean autoDropFunctions = false;
 
     public Arguments(String[] args) throws DBPatcherException {
         databaseXmlPath = getFirstArg(args);
@@ -39,6 +43,10 @@ public class Arguments {
                 usernameOverride = argumentMap.get(ARG_USERNAME);
             else if (argKey.equals(ARG_PASSWORD))
                 passwordOverride = argumentMap.get(ARG_PASSWORD);
+            else if (argKey.equals(ARG_DROPFNS))
+                dropFunctions = true;
+            else if (argKey.equals(ARG_AUTODROPFNS))
+                autoDropFunctions = true;
             else
                 throw new DBPatcherException("Option '" + argKey + "' not recognised");
         }
@@ -72,6 +80,14 @@ public class Arguments {
 
     public String getPasswordOverride() {
         return passwordOverride;
+    }
+
+    public Boolean getDropFunctions() {
+        return dropFunctions;
+    }
+
+    public Boolean getAutoDropFunctions() {
+        return autoDropFunctions;
     }
 
     private static String getFirstArg(String args[]) {

@@ -88,7 +88,10 @@ public class DBPatcher extends FlywayCallback {
         try {
             if (configuration.getFunctionsPath() != null) {
                 LOG.infoWithDivider("Applying functions");
-                dropUserFunctions();
+
+                if (configuration.getDropFunctions())
+                    dropUserFunctions();
+
                 applyUserFunctions();
             }
 
@@ -104,24 +107,46 @@ public class DBPatcher extends FlywayCallback {
         if (functionsToDrop.size() == 0)
             return;
 
-        LOG.info("Drop " + Integer.toString(functionsToDrop.size()) + " existing user function(s) on DB first?");
-        LOG.info("");
+        boolean dropFunctions = false;
 
-        int count = 1;
+        if (configuration.getAutoDropFunctions()) {
+            dropFunctions = true;
+        } else {
+            String question = "Drop " + Integer.toString(functionsToDrop.size()) + " existing user function(s) on DB first?";
 
-        for (String line : functionsToDrop)
-            LOG.info(" " + Integer.toString(count++) + ". " + line);
-
-        LOG.info("");
-        LOG.info("> Drop " + Integer.toString(functionsToDrop.size()) + " existing user function(s) on DB first?");
-
-        if (ConsoleHelper.readYesNoFromConsole()) {
+            LOG.info(question);
             LOG.info("");
-            LOG.info("Dropping existing user function(s)");
+
+            printNumberedList(functionsToDrop);
+
+            LOG.info("");
+            LOG.info("> " + question);
+
+            dropFunctions = ConsoleHelper.readYesNoFromConsole();
+
+            LOG.info("");
+        }
+
+        if (dropFunctions) {
+            LOG.info("Dropping existing user function(s):");
+            LOG.info("");
+            printNumberedList(functionsToDrop);
+
             dataLayer.dropUserFunctions(functionsToDrop);
         }
 
         LOG.info("");
+    }
+
+    private void printNumberedList(List<String> items) {
+        int count = 1;
+
+        for (String item : items)
+            printNumberedListItem(item, count++);
+    }
+
+    private void printNumberedListItem(String item, int number) {
+        LOG.info(" " + Integer.toString(number) + ". " + item);
     }
 
     private void applyUserFunctions() throws SQLException, IOException {
@@ -130,11 +155,12 @@ public class DBPatcher extends FlywayCallback {
         if (functionsToApply.size() == 0)
             return;
 
-        LOG.info("Applying " + Integer.toString(functionsToApply.size()) + " user function(s)...");
+        LOG.info("Applying " + Integer.toString(functionsToApply.size()) + " user function(s):");
+        LOG.info("");
 
         int count = 1;
         for (File file : functionsToApply) {
-            LOG.info(" " + Integer.toString(count++) + ". " + file.getName());
+            printNumberedListItem(file.getName(), count++);
 
             String sql = FileHelper.readUtf8ToString(file);
             dataLayer.applyFunction(sql);

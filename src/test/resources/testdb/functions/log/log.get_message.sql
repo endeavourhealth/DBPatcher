@@ -1,4 +1,4 @@
-create function log.get_message(message_id integer)
+create or replace function log.get_message(message_id integer)
 returns integer as
 $$
 begin

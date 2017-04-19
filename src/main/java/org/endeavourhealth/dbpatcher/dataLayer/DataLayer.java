@@ -3,14 +3,13 @@ package org.endeavourhealth.dbpatcher.dataLayer;
 import org.apache.commons.lang3.StringUtils;
 import org.endeavourhealth.dbpatcher.helpers.ResourceHelper;
 
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class DataLayer {
     private Connection connection;
@@ -25,7 +24,7 @@ public class DataLayer {
         return statement;
     }
 
-    public List<String> getUserFunctionSignatures() throws IOException, SQLException {
+    public List<String> getUserFunctionSignatures() throws Exception {
         try (Statement statement = createStatement()) {
 
             String sql = ResourceHelper.getResourceAsString("postgresql/get-user-functions.sql");
@@ -42,24 +41,26 @@ public class DataLayer {
         }
     }
 
-    public void dropUserFunctions(List<String> functionSignatures) throws SQLException {
+    public void dropUserFunctions(List<String> functionSignatures) throws Exception {
 
-        if (functionSignatures.size() == 0)
+        String sql = ResourceHelper.getResourceAsString("postgresql/drop-function.sql");
+
+        String sqlBatch = "";
+
+        for (String functionSignature : functionSignatures)
+            sqlBatch += MessageFormat.format(sql, functionSignature) + "\n";
+
+        if (StringUtils.isBlank(sqlBatch))
             return;
 
-        String sql = StringUtils
-                .join(functionSignatures
-                        .stream()
-                        .map(t -> "drop function " + t)
-                        .collect(Collectors.toList())
-               , "\n");
-
-        try (Statement statement = connection.createStatement()) {
-            statement.execute(sql);
-        }
+        executeStatement(sqlBatch);
     }
 
-    public void executeSql(String sql) throws SQLException {
+    public void applyFunction(String functionSql) throws SQLException {
+        executeStatement(functionSql);
+    }
+
+    private void executeStatement(String sql) throws SQLException {
         try (Statement statement = connection.createStatement()) {
             statement.execute(sql);
         }

@@ -1,4 +1,4 @@
-create function get_person(person_id integer)
+create or replace function get_person(person_id integer)
 returns integer as
 $$
 begin

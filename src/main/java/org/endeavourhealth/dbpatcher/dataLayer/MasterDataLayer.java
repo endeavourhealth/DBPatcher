@@ -3,10 +3,8 @@ package org.endeavourhealth.dbpatcher.dataLayer;
 import org.endeavourhealth.dbpatcher.helpers.ResourceHelper;
 
 import javax.sql.DataSource;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.MessageFormat;
 
@@ -18,15 +16,20 @@ public class MasterDataLayer {
         this.dataSource = dataSource;
     }
 
-    public void createDatabase(String databaseName) throws SQLException {
+    public void createDatabase(String databaseName) throws Exception {
         try (Connection connection = dataSource.getConnection()) {
             try (Statement statement = connection.createStatement()) {
-                statement.execute("create database " + databaseName + ";");
+
+                String sql = ResourceHelper.getResourceAsString("postgresql/create-database.sql");
+
+                sql = MessageFormat.format(sql, databaseName);
+
+                statement.execute(sql);
             }
         }
     }
 
-    public boolean doesDatabaseExist(String databaseName) throws IOException, SQLException {
+    public boolean doesDatabaseExist(String databaseName) throws Exception {
         try (Connection connection = dataSource.getConnection()) {
             try (Statement statement = connection.createStatement()) {
 
@@ -37,7 +40,6 @@ public class MasterDataLayer {
                 try (ResultSet resultSet = statement.executeQuery(sql)) {
 
                     resultSet.next();
-
                     return resultSet.getBoolean("database_exists");
                 }
             }

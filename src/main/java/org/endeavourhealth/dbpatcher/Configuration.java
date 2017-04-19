@@ -79,7 +79,7 @@ public class Configuration {
         File xmlFile = getDatabaseXmlFile(arguments.getDatabaseXmlPath());
         Database database = getDatabaseXml(xmlFile);
 
-        LOG.info(" Using configuration:");
+        LOG.info("Using configuration:");
 
         printConfiguration("Database xml file", getCanonicalPath(xmlFile));
 
@@ -148,7 +148,7 @@ public class Configuration {
         if (hideValue)
             printedValue = "(value hidden)";
 
-        LOG.info("  " + StringUtils.rightPad(name + ":  ", 27) + printedValue);
+        LOG.info(" " + StringUtils.rightPad(name + ":  ", 27) + printedValue);
     }
 
     private String getAndPrintCanonicalPath(String pathName, String relativePathValue) throws DBPatcherException {
@@ -179,14 +179,24 @@ public class Configuration {
 
     private static Database getDatabaseXml(File xmlFile) throws DBPatcherException {
         try {
-            String xsd = ResourceHelper.getResourceAsString(DATABASE_SCHEMA_FILENAME);
+            String xsd = getDatabaseXsd();
             String xml = FileUtils.readFileToString(xmlFile, StandardCharsets.UTF_8);
 
             XmlHelper.validate(xml, xsd);
 
             return XmlHelper.deserialize(xml, Database.class);
+        } catch (DBPatcherException e) {
+            throw e;
         } catch (Exception e) {
             throw new DBPatcherException("Error reading '" + xmlFile.getPath() + "' - " + e.getMessage(), e);
+        }
+    }
+
+    private static String getDatabaseXsd() throws DBPatcherException {
+        try {
+            return ResourceHelper.getResourceAsString(DATABASE_SCHEMA_FILENAME);
+        } catch (Exception e) {
+            throw new DBPatcherException("Error reading database XSD resource - " + e.getMessage(), e);
         }
     }
 

@@ -29,12 +29,12 @@ public class DBPatcher extends FlywayCallback {
         this.configuration = new Configuration(arguments);
     }
 
-    public void patch() throws IOException, SQLException, DBPatcherException {
+    public void patch() throws Exception {
         checkIfDatabaseExists();
         startFlyway();
     }
 
-    private void checkIfDatabaseExists() throws IOException, SQLException, DBPatcherException {
+    private void checkIfDatabaseExists() throws Exception {
         DataSource masterDataSource = getDataSource(POSTGRES_MASTER_DB);
         MasterDataLayer masterDataLayer = new MasterDataLayer(masterDataSource);
 
@@ -64,7 +64,7 @@ public class DBPatcher extends FlywayCallback {
     }
 
     private void startFlyway() {
-        LOG.infoWithDivider("Calling flyway to commence patching...");
+        LOG.infoWithDivider("Calling flyway to commence patching");
 
         DataSource dataSource = getDataSource(configuration.getDatabaseName());
 
@@ -97,7 +97,7 @@ public class DBPatcher extends FlywayCallback {
         }
     }
 
-    private void dropUserFunctions() throws IOException, SQLException {
+    private void dropUserFunctions() throws Exception {
 
         List<String> functionsToDrop = dataLayer.getUserFunctionSignatures();
 
@@ -137,7 +137,7 @@ public class DBPatcher extends FlywayCallback {
             LOG.info(" " + Integer.toString(count++) + ". " + file.getName());
 
             String sql = FileHelper.readUtf8ToString(file);
-            dataLayer.executeSql(sql);
+            dataLayer.applyFunction(sql);
         }
     }
 }

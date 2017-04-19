@@ -9,6 +9,7 @@ import org.endeavourhealth.dbpatcher.exceptions.DBPatcherException;
 import org.endeavourhealth.dbpatcher.helpers.LogHelper;
 import org.endeavourhealth.dbpatcher.helpers.ResourceHelper;
 import org.endeavourhealth.dbpatcher.helpers.XmlHelper;
+import org.postgresql.ds.PGSimpleDataSource;
 
 import java.io.File;
 import java.io.IOException;
@@ -132,9 +133,6 @@ public class Configuration {
             return func.apply(obj);
 
         return null;
-    }
-
-    public void patch() {
     }
 
     private String getOptionalValue(String valueName, String value, String overriddenValue) {

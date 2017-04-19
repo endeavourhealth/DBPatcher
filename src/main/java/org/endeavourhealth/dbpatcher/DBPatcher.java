@@ -11,7 +11,6 @@ import org.endeavourhealth.dbpatcher.helpers.FileHelper;
 import org.flywaydb.core.Flyway;
 import org.postgresql.ds.PGSimpleDataSource;
 
-import javax.sql.DataSource;
 import java.io.File;
 import java.sql.Connection;
 import java.util.List;
@@ -35,8 +34,7 @@ public class DBPatcher extends FlywayCallback {
     }
 
     private void checkIfDatabaseExists() throws Exception {
-        DataSource masterDataSource = getDataSource(POSTGRES_MASTER_DB);
-        MasterDataLayer masterDataLayer = new MasterDataLayer(masterDataSource);
+        MasterDataLayer masterDataLayer = new MasterDataLayer(getDataSource(POSTGRES_MASTER_DB));
 
         LOG.infoWithDivider("Looking for database");
 
@@ -46,11 +44,27 @@ public class DBPatcher extends FlywayCallback {
             if (!ConsoleHelper.readYesNoFromConsole())
                 throw new DBPatcherException("Database '" + this.configuration.getDatabaseName() + "' does not exist");
 
+            LOG.info("> Are you sure you wish to create a new database with name '" + this.configuration.getDatabaseName() + "' on host '" + this.configuration.getHostname() + "'?");
+
+            if (!ConsoleHelper.readConfirmationFromConsole("Please type the database name to confirm", this.configuration.getDatabaseName()))
+                throw new DBPatcherException("Database '" + this.configuration.getDatabaseName() + "' does not exist");
+
             LOG.info("Creating database '" + this.configuration.getDatabaseName() + "'");
             masterDataLayer.createDatabase(this.configuration.getDatabaseName());
         } else {
             LOG.info("Database '" + this.configuration.getDatabaseName() + "' found");
         }
+    }
+
+    private void startFlyway() {
+        LOG.infoWithDivider("Calling flyway to commence patching");
+
+        Flyway flyway = new Flyway();
+        flyway.setDataSource(getDataSource(configuration.getDatabaseName()));
+        flyway.setLocations("filesystem:" + configuration.getSchemaPath());
+        flyway.setSqlMigrationSeparator("-");
+        flyway.setCallbacks(this);
+        flyway.migrate();
     }
 
     private PGSimpleDataSource getDataSource(String databaseName) {
@@ -61,19 +75,6 @@ public class DBPatcher extends FlywayCallback {
         pgSimpleDataSource.setUser(configuration.getUsername());
         pgSimpleDataSource.setPassword(configuration.getPassword());
         return pgSimpleDataSource;
-    }
-
-    private void startFlyway() {
-        LOG.infoWithDivider("Calling flyway to commence patching");
-
-        DataSource dataSource = getDataSource(configuration.getDatabaseName());
-
-        Flyway flyway = new Flyway();
-        flyway.setDataSource(dataSource);
-        flyway.setLocations("filesystem:" + configuration.getSchemaPath());
-        flyway.setSqlMigrationSeparator("-");
-        flyway.setCallbacks(this);
-        flyway.migrate();
     }
 
     @Override

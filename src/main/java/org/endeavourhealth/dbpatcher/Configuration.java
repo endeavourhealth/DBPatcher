@@ -73,10 +73,28 @@ public class Configuration {
         return autoDropFunctions;
     }
 
-    public static Configuration processConfiguration(String[] args) throws DBPatcherException {
-        Arguments arguments = new Arguments(args);
+    public static Configuration processConfiguration(String zipFileName, String zipFileDirectory, String[] optionalArgs) throws DBPatcherException {
+        Arguments arguments = new Arguments(optionalArgs);
 
-        File xmlFile = getDatabaseXmlFile(arguments.getTargetFilePath());
+        String databaseXmlPath;
+
+        if (StringUtils.isNotEmpty(arguments.getXmlFileInZipPath()))
+            databaseXmlPath = Paths.get(zipFileDirectory, arguments.getXmlFileInZipPath()).toString();
+        else
+            databaseXmlPath = Paths.get(zipFileDirectory, "database.xml").toString();
+
+        return processConfigurationInternal(databaseXmlPath, arguments);
+    }
+
+    public static Configuration processConfiguration(String databaseXmlPath, String[] optionalArgs) throws DBPatcherException {
+        Arguments arguments = new Arguments(optionalArgs);
+
+        return processConfigurationInternal(databaseXmlPath, arguments);
+    }
+
+    public static Configuration processConfigurationInternal(String databaseXmlPath, Arguments arguments) throws DBPatcherException {
+
+        File xmlFile = getDatabaseXmlFile(databaseXmlPath);
         Database database = getDatabaseXml(xmlFile);
 
         LOG.info("Using configuration:");

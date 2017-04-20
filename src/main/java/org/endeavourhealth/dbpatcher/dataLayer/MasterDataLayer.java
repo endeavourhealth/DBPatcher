@@ -1,5 +1,6 @@
 package org.endeavourhealth.dbpatcher.dataLayer;
 
+import org.endeavourhealth.dbpatcher.ResourceFileNames;
 import org.endeavourhealth.dbpatcher.helpers.ResourceHelper;
 
 import javax.sql.DataSource;
@@ -20,7 +21,7 @@ public class MasterDataLayer {
         try (Connection connection = dataSource.getConnection()) {
             try (Statement statement = connection.createStatement()) {
 
-                String sql = ResourceHelper.getResourceAsString("postgresql/create-database.sql");
+                String sql = ResourceHelper.getResourceAsString(ResourceFileNames.CREATE_DATABASE_SQL);
 
                 sql = MessageFormat.format(sql, databaseName);
 
@@ -33,7 +34,7 @@ public class MasterDataLayer {
         try (Connection connection = dataSource.getConnection()) {
             try (Statement statement = connection.createStatement()) {
 
-                String sql = ResourceHelper.getResourceAsString("postgresql/does-database-exist.sql");
+                String sql = ResourceHelper.getResourceAsString(ResourceFileNames.DOES_DATABASE_EXIST_SQL);
 
                 sql = MessageFormat.format(sql, databaseName);
 

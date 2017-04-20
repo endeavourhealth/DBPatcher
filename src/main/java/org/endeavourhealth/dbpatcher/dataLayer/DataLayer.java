@@ -1,6 +1,7 @@
 package org.endeavourhealth.dbpatcher.dataLayer;
 
 import org.apache.commons.lang3.StringUtils;
+import org.endeavourhealth.dbpatcher.ResourceFileNames;
 import org.endeavourhealth.dbpatcher.dataLayer.model.Function;
 import org.endeavourhealth.dbpatcher.dataLayer.model.Trigger;
 import org.endeavourhealth.dbpatcher.helpers.ResourceHelper;
@@ -28,8 +29,7 @@ public class DataLayer {
 
     public List<Function> getUserFunctions() throws Exception {
         try (Statement statement = createStatement()) {
-
-            String sql = ResourceHelper.getResourceAsString("postgresql/get-user-functions.sql");
+            String sql = ResourceHelper.getResourceAsString(ResourceFileNames.GET_USER_FUNCTIONS_SQL);
 
             try (ResultSet resultSet = statement.executeQuery(sql)) {
 
@@ -49,8 +49,7 @@ public class DataLayer {
 
     public List<Trigger> getUserTriggers() throws Exception {
         try (Statement statement = createStatement()) {
-
-            String sql = ResourceHelper.getResourceAsString("postgresql/get-user-triggers.sql");
+            String sql = ResourceHelper.getResourceAsString(ResourceFileNames.GET_USER_TRIGGERS_SQL);
 
             try (ResultSet resultSet = statement.executeQuery(sql)) {
 
@@ -75,8 +74,7 @@ public class DataLayer {
     }
 
     public void dropUserFunctions(List<Function> functions) throws Exception {
-
-        String sql = ResourceHelper.getResourceAsString("postgresql/drop-function.sql");
+        String sql = ResourceHelper.getResourceAsString(ResourceFileNames.DROP_FUNCTION_SQL);
 
         String sqlBatch = "";
 

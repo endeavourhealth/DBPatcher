@@ -95,12 +95,15 @@ public class Main {
         LOG.info("           " + padHelpArg(Arguments.ARG_USERNAME + "=username") + "Override username in DB_XML_FILE");
         LOG.info("           " + padHelpArg(Arguments.ARG_PASSWORD + "=password") + "Override password in DB_XML_FILE");
         LOG.info("");
-        LOG.info("           " + padHelpArg(Arguments.ARG_XML + "=DB_XML_FILE") + "Specify DB_XML_FILE file name in root of ZIP file; default database.xml");
+        LOG.info("           " + padHelpArg(Arguments.ARG_XML + "=DB_XML_FILE") + "Specify DB_XML_FILE file name in root of");
+        LOG.info("           " + padHelpArg("") + "ZIP file; default database.xml");
         LOG.info("");
-        LOG.info("           " + padHelpArg(Arguments.ARG_DROPFNS) + "Prompts to drop all functions before applying fns in DB_XML_FILE");
-        LOG.info("           " + padHelpArg(Arguments.ARG_AUTODROPFNS) + "Automatically drops all functions before applying fns in DB_XML_FILE");
+        LOG.info("           " + padHelpArg(Arguments.ARG_DROPFNS) + "Prompts to drop all functions before");
+        LOG.info("           " + padHelpArg("") + "applying fns in DB_XML_FILE");
+        LOG.info("           " + padHelpArg(Arguments.ARG_AUTODROPFNS) + "Automatically drops all functions before");
+        LOG.info("           " + padHelpArg("") + "applying fns in DB_XML_FILE");
         LOG.info("");
-        LOG.info("           " + padHelpArg(Arguments.ARG_SAMPLE_XML) + "Write sample DB_XML_FILE file in current dir");
+        LOG.info("           " + padHelpArg(Arguments.ARG_SAMPLE_XML) + "Write sample DB_XML_FILE file");
         LOG.info("           " + padHelpArg(Arguments.ARG_HELP) + "Print this message");
         LOG.info("");
     }

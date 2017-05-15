@@ -81,6 +81,7 @@ public class Main {
         } catch (Exception e) {
             LOG.error(e);
             LOG.errorWithDivider("PATCH FAILURE");
+            System.exit(-1);
         }
     }
 
